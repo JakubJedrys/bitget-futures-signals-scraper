@@ -1,6 +1,7 @@
 import argparse
 import sys
 import time
+from pathlib import Path
 
 from .config import AppConfig, ensure_data_dir
 from .screenshotter import XrpFuturesCanvasScreenshotter
