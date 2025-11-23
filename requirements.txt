@@ -1,2 +1,5 @@
 playwright
 pytest
+requests
+pandas
+mplfinance

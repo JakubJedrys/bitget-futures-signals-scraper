@@ -8,14 +8,14 @@ from playwright.sync_api import (
     sync_playwright,
 )
 
-from . import config
+from .config import config
 
 
 class XrpFuturesCanvasScreenshotter:
     """Zrzuca canvas wykresu kontraktu XRPUSDT Futures z Bitget."""
 
     def __init__(self, user_agent: Optional[str] = None) -> None:
-        self.user_agent = user_agent or config.AppConfig.USER_AGENT
+        self.user_agent = user_agent or config.USER_AGENT
 
     def _start_playwright(self) -> Playwright:
         return sync_playwright().start()
@@ -53,7 +53,7 @@ class XrpFuturesCanvasScreenshotter:
             )
             page = context.new_page()
             page.goto(
-                config.AppConfig.BITGET_XRP_FUTURES_URL,
+                config.BITGET_XRP_FUTURES_URL,
                 wait_until="networkidle",
                 timeout=30000,
             )
@@ -81,6 +81,6 @@ class XrpFuturesCanvasScreenshotter:
 
 
 def build_output_path(filename: str, base_dir: Optional[Path] = None) -> Path:
-    target_dir = base_dir or config.AppConfig.DATA_DIR
+    target_dir = base_dir or config.DATA_DIR
     target_dir.mkdir(parents=True, exist_ok=True)
     return target_dir / filename
