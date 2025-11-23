@@ -1,6 +1,6 @@
 # Bitget XRPUSDT Futures Canvas Screenshotter
 
-Aplikacja w Pythonie do automatycznego robienia zrzutów ekranu wykresu kontraktu futures XRPUSDT na giełdzie Bitget (tylko element `<canvas>` z wykresem). Pliki PNG lądują w folderze `SS-XRP` na pulpicie Windows 11.
+Aplikacja w Pythonie do automatycznego robienia zrzutów ekranu wykresu kontraktu futures XRPUSDT na giełdzie Bitget (w pierwszej kolejności element `<canvas>` z wykresem, a w przypadku problemów awaryjnie cały widok strony). Pliki PNG lądują w folderze `SS-XRP` na pulpicie Windows 11.
 
 ## Wymagania
 - Python 3.11+ (działa także w innych wersjach 3.x)
@@ -44,3 +44,4 @@ Folder jest tworzony automatycznie, jeżeli jeszcze nie istnieje.
 ## Typowe problemy
 - Jeśli Playwright nie widzi elementu canvas, upewnij się, że przeglądarki zostały zainstalowane poleceniem `python -m playwright install`.
 - Przy pierwszym uruchomieniu na słabszych łączach możesz zwiększyć czas ładowania strony, uruchamiając komendę z przełącznikiem `--no-headless` i sprawdzając, czy wykres jest widoczny.
+- Gdy po dłuższym oczekiwaniu nie uda się znaleźć `<canvas>`, program zapisze zrzut całej strony; dzięki temu możesz szybko zweryfikować, co blokuje załadowanie wykresu.

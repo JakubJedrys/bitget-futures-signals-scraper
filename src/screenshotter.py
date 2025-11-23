@@ -1,8 +1,12 @@
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Iterable, Optional
 
-from playwright.sync_api import Playwright, TimeoutError as PlaywrightTimeoutError, sync_playwright
+from playwright.sync_api import (
+    Playwright,
+    TimeoutError as PlaywrightTimeoutError,
+    sync_playwright,
+)
 
 from . import config
 
@@ -23,6 +27,21 @@ class XrpFuturesCanvasScreenshotter:
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         return f"xrp_futures_{timestamp}.png"
 
+    def _find_canvas(self, page) -> Optional[object]:
+        selectors: Iterable[str] = (
+            "canvas",
+            "div[class*='chart'] canvas",
+            "div[class*='kline'] canvas",
+        )
+        for selector in selectors:
+            try:
+                handle = page.wait_for_selector(selector, timeout=30000)
+            except PlaywrightTimeoutError:
+                continue
+            if handle:
+                return handle
+        return None
+
     def take_screenshot(self, output_path: Path, headless: bool = True) -> None:
         playwright_instance = self._start_playwright()
         browser = None
@@ -34,21 +53,21 @@ class XrpFuturesCanvasScreenshotter:
             )
             page = context.new_page()
             page.goto(
-                config.AppConfig.BITGET_XRP_FUTURES_URL, wait_until="networkidle"
+                config.AppConfig.BITGET_XRP_FUTURES_URL,
+                wait_until="networkidle",
+                timeout=30000,
             )
             page.wait_for_timeout(3000)
 
-            try:
-                canvas_handle = page.wait_for_selector("canvas", timeout=15000)
-            except PlaywrightTimeoutError as error:
-                raise RuntimeError(
-                    "Nie udało się znaleźć elementu canvas z wykresem."
-                ) from error
+            canvas_handle = self._find_canvas(page)
+            if canvas_handle is not None:
+                canvas_handle.screenshot(path=str(output_path))
+                return
 
-            if canvas_handle is None:
-                raise RuntimeError("Nie udało się znaleźć elementu canvas z wykresem.")
-
-            canvas_handle.screenshot(path=str(output_path))
+            print(
+                "Nie udało się znaleźć elementu canvas - zapisuję zrzut całej strony jako fallback."
+            )
+            page.screenshot(path=str(output_path), full_page=True)
         except PlaywrightTimeoutError as error:
             raise RuntimeError(
                 "Przekroczono czas oczekiwania na załadowanie strony lub elementu."
