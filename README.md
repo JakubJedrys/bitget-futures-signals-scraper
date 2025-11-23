@@ -1,2 +1,2 @@
-# bitget-spot-signals-scraper
-Scraper sygnałów Spot Signals z Bitget (Python)
+# bitget-futures-signals-scraper
+Scraper sygnałów Futures Signals z Bitget (Python)
